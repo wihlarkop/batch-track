@@ -23,3 +23,9 @@ pub async fn shutdown_signal() {
         _ = terminate => {},
     }
 }
+
+pub async fn fallback(
+    uri: axum::http::Uri
+) -> impl axum::response::IntoResponse {
+    (axum::http::StatusCode::NOT_FOUND, format!("No route {}", uri))
+}
