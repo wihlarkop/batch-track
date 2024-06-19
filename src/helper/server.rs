@@ -1,4 +1,5 @@
 use tokio::signal;
+use tracing::info;
 
 pub async fn shutdown_signal() {
     let ctrl_c = async {
@@ -24,8 +25,8 @@ pub async fn shutdown_signal() {
     }
 }
 
-pub async fn fallback(
-    uri: axum::http::Uri
-) -> impl axum::response::IntoResponse {
-    (axum::http::StatusCode::NOT_FOUND, format!("No route {}", uri))
+pub async fn fallback(uri: axum::http::Uri) -> impl axum::response::IntoResponse {
+    let error_message = format!("No route {uri}");
+    info!(error_message);
+    return (axum::http::StatusCode::NOT_FOUND, error_message);
 }

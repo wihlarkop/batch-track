@@ -1,12 +1,21 @@
 mod helper;
 
+use std::collections::HashMap;
 use std::net::SocketAddr;
 use axum::{routing::get, Router, Json};
-use serde_json::{json, Value};
+use axum::http::StatusCode;
 use tracing::info;
 use tracing_subscriber;
+use serde::Serialize;
 
 use crate::helper::server::{fallback, shutdown_signal};
+
+#[derive(Serialize)]
+struct HealthResponse {
+    service_name: String,
+    service_version: String,
+    status: HashMap<String, bool>,
+}
 
 
 #[tokio::main]
@@ -33,7 +42,13 @@ async fn main() {
 }
 
 
-async fn health() -> Json<Value> {
-    info!("handling req");
-    json!({"status": "Success"}).into()
+async fn health() -> Json<HealthResponse> {
+    let mut status = HashMap::new();
+
+    let response = HealthResponse {
+        service_name: "batch tracker".to_string(),
+        service_version: "v0.0.1".to_string(),
+        status,
+    };
+    Json(response)
 }
